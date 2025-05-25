@@ -127,14 +127,16 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
 
             case RELEASE:
 
-                ricartAgrawala.onRelease(message);
                 if (latchCriticalSection != null) latchCriticalSection.countDown();
+                ricartAgrawala.onRelease(message);
+
                 break;
 
             case REPLY:
 
-                ricartAgrawala.onReply(message);
                 if (latchCriticalSection != null) latchCriticalSection.countDown();
+                ricartAgrawala.onReply(message);
+
 
                 break;
 
