@@ -14,7 +14,7 @@ public abstract class NodeTCP {
 
     public NodeTCP(NodeInfo nodeInfo) {
         this.nodeInfo = nodeInfo;
-        this.executor = Executors.newCachedThreadPool();
+        this.executor = Executors.newFixedThreadPool(2);
     }
 
     public abstract void start();
