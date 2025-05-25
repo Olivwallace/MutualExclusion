@@ -141,7 +141,7 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
             case PRINT_ACK:
 
                 ricartAgrawala.releaseCriticalSection();
-                if (latchCritialSectionToServer != null) latchCritialSectionToServer.countDown();
+//                if (latchCritialSectionToServer != null) latchCritialSectionToServer.countDown();
 
                 break;
         }
@@ -201,13 +201,13 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
 
         try {
 
-            latchCritialSectionToServer = new CountDownLatch(1);
-            long waitTime = 5L * (k + 1);
-
-            if(!latchCritialSectionToServer.await(waitTime, TimeUnit.SECONDS)){
-                System.out.println("NÃO FOI RECEBIDA PRINT_ACK");
-                ricartAgrawala.releaseCriticalSection();
-            }
+//            latchCritialSectionToServer = new CountDownLatch(1);
+//            long waitTime = 5L * (k + 1);
+//
+//            if(!latchCritialSectionToServer.await(waitTime, TimeUnit.SECONDS)){
+//                System.out.println("NÃO FOI RECEBIDA PRINT_ACK");
+//                ricartAgrawala.releaseCriticalSection();
+//            }
 
         } catch (Exception e){
             e.printStackTrace();
