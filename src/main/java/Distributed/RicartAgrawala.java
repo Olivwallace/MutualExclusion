@@ -7,6 +7,7 @@ import Network.NodeInfo;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RicartAgrawala {
 
@@ -18,7 +19,7 @@ public class RicartAgrawala {
     private Integer timestamp = 0;
 
     private HashSet<NodeInfo> pendingReplies = new HashSet<>();
-    private final List<NodeInfo> deferredNodes = new ArrayList<>();
+    private final List<NodeInfo> deferredNodes = new CopyOnWriteArrayList<>();
 
     public RicartAgrawala(DistributedNodeInterface delegate){
         this.delegate = delegate;
@@ -66,7 +67,7 @@ public class RicartAgrawala {
                 isDeferred = (fromNode.id().compareTo(currentID) > 0);
             }
         }
-
+//--------------> 99% de certeza que aqui tem PRINT_ACK...
         if(isDeferred){
             deferredNodes.add(fromNode);
         } else {
