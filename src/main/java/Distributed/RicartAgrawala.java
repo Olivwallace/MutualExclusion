@@ -44,6 +44,10 @@ public class RicartAgrawala {
 
     }
 
+    public synchronized void onRelease(Message messageRelease){
+        onReply(messageRelease);
+    }
+
     public synchronized void onRequest(Message messageRequest, String currentID){
 
         updateClock(messageRequest.getTimestamp());
@@ -76,7 +80,6 @@ public class RicartAgrawala {
         updateClock(messageReply.getTimestamp());
 
         NodeInfo fromNode = messageReply.getSender();
-        System.out.println("REMOVE NODE FROM PENDING: " + fromNode.id());
         pendingReplies.remove(fromNode);
 
         if(requestingCriticalSection && pendingReplies.isEmpty()){
@@ -90,9 +93,13 @@ public class RicartAgrawala {
         updateClock(timestamp);
 
         toggleInCriticalSection();
-        for(NodeInfo releaseNode : deferredNodes){
+        requestingCriticalSection = false;
+
+        while(!deferredNodes.isEmpty()){
+            NodeInfo releaseNode = deferredNodes.remove(0);
             delegate.release(releaseNode, timestamp);
         }
+
     }
 
     public synchronized void toggleInCriticalSection(){

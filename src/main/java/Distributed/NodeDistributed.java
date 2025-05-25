@@ -14,9 +14,10 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
 
     private final NodeManager manager;
     private final RicartAgrawala ricartAgrawala;
-    private CountDownLatch latch;
+    private CountDownLatch latchJoinConnect;
 
     private CountDownLatch latchCriticalSection;
+    private CountDownLatch latchCritialSectionToServer;
 
     private NodeInfo serviceInfo;
 
@@ -40,7 +41,7 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
         while (!manager.getPendingNodes().isEmpty()) {
 
             List<NodeInfo> currentPendingNodes = new ArrayList<>(manager.getPendingNodes());
-            latch = new CountDownLatch(currentPendingNodes.size());
+            latchJoinConnect = new CountDownLatch(currentPendingNodes.size());
 
             for (NodeInfo pendingNode : currentPendingNodes) {
                 if(pendingNode != nodeInfo) {
@@ -50,7 +51,7 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
             }
 
             try {
-                boolean completed = latch.await(1, TimeUnit.MINUTES);
+                boolean completed = latchJoinConnect.await(1, TimeUnit.MINUTES);
 
                 if(!completed){
                     for(NodeInfo node : currentPendingNodes){
@@ -109,8 +110,8 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
 
                 manager.confirmNode(message.getSender());
                 manager.addNodes(message.getKnownNodes(), nodeInfo);
-                if (latch != null) {
-                    latch.countDown();
+                if (latchJoinConnect != null) {
+                    latchJoinConnect.countDown();
                 }
                 break;
 
@@ -120,10 +121,14 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
                 break;
 
             case REQUEST:
+
+                ricartAgrawala.onRequest(message, nodeInfo.id());
+                break;
+
             case RELEASE:
 
                 if (latchCriticalSection != null) latchCriticalSection.countDown();
-                ricartAgrawala.onRequest(message, nodeInfo.id());
+                ricartAgrawala.onRelease(message);
                 break;
 
             case REPLY:
@@ -134,7 +139,7 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
 
             case PRINT_ACK:
 
-                if (latchCriticalSection != null) latchCriticalSection.countDown();
+                if (latchCritialSectionToServer != null) latchCritialSectionToServer.countDown();
                 ricartAgrawala.releaseCriticalSection();
                 break;
         }
@@ -181,7 +186,7 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
 
     @Override
     public void runCriticalSection() {
-        int k = Uteis.randomInt(0,10);
+        int k = Uteis.randomInt(1,3);
         Integer timestamp = ricartAgrawala.getTimestamp();
         ArrayList<Integer> sequencePrint = new ArrayList<>();
 
@@ -194,10 +199,10 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
 
         try {
 
-            latchCriticalSection = new CountDownLatch(1);
+            latchCritialSectionToServer = new CountDownLatch(1);
             long waitTime = 5L * (k + 1);
 
-            if(!latchCriticalSection.await(waitTime, TimeUnit.SECONDS)){
+            if(!latchCritialSectionToServer.await(waitTime, TimeUnit.SECONDS)){
                 System.out.println("NÃO FOI RECEBIDA PRINT_ACK");
                 ricartAgrawala.releaseCriticalSection();
             }
