@@ -127,20 +127,22 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
 
             case RELEASE:
 
-                if (latchCriticalSection != null) latchCriticalSection.countDown();
                 ricartAgrawala.onRelease(message);
+                if (latchCriticalSection != null) latchCriticalSection.countDown();
                 break;
 
             case REPLY:
 
-                if (latchCriticalSection != null) latchCriticalSection.countDown();
                 ricartAgrawala.onReply(message);
+                if (latchCriticalSection != null) latchCriticalSection.countDown();
+
                 break;
 
             case PRINT_ACK:
 
-                if (latchCritialSectionToServer != null) latchCritialSectionToServer.countDown();
                 ricartAgrawala.releaseCriticalSection();
+                if (latchCritialSectionToServer != null) latchCritialSectionToServer.countDown();
+
                 break;
         }
     }
