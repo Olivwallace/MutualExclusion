@@ -1,5 +1,7 @@
 package Network;
 
+import Uteis.LogCat;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -58,9 +60,7 @@ public abstract class NodeTCP {
         }
     }
 
-    protected void handleMessage(Message message, String senderIp) {
-        System.out.println("[" + nodeInfo.id() + "] Received: " + message + " from " + senderIp);
-    }
+    protected abstract void handleMessage(Message message, String senderIp);
 
     public void sendMessage(String targetIp, int targetPort, Message message) {
         try (
@@ -69,7 +69,7 @@ public abstract class NodeTCP {
         ) {
             out.writeObject(message);
             out.flush();
-            System.out.println("[" + nodeInfo.id() + "] Send: " + message + " to " + targetIp + ":" + targetPort);
+
         } catch (IOException e) {
             System.out.println("[" + nodeInfo.id() + "] Error sending message: " + e.getMessage());
         }

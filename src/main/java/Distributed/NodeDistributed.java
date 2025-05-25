@@ -3,7 +3,7 @@ package Distributed;
 import Enums.MessageType;
 import Interfaces.DistributedNodeInterface;
 import Network.*;
-import Uteis.Uteis;
+import Uteis.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
 
             for (NodeInfo pendingNode : currentPendingNodes) {
                 if(pendingNode != nodeInfo) {
-                    Message message = new Message(MessageType.JOIN.name(), nodeInfo);
+                    Message message = new Message(MessageType.JOIN.name(), nodeInfo, 0);
                     sendMessage(pendingNode, message);
                 }
             }
@@ -86,14 +86,14 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
 
         //BroadCast de Saida...
         for(NodeInfo knownNode : manager.getKnownNodes()){
-            Message leaveMsg = new Message(MessageType.LEAVE.name(), nodeInfo);
+            Message leaveMsg = new Message(MessageType.LEAVE.name(), nodeInfo, ricartAgrawala.getTimestamp());
             sendMessage(knownNode, leaveMsg);
         }
     }
 
     @Override
     protected void handleMessage(Message message, String senderIp) {
-        super.handleMessage(message,senderIp);
+
         MessageType messageType = MessageType.valueOf(message.getType());
 
         switch (messageType) {
@@ -147,6 +147,8 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
 
                 break;
         }
+
+        LogCat.logReceived(nodeInfo.id(), ricartAgrawala.getTimestamp(), message);
     }
 
     @Override
@@ -180,6 +182,7 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
 
     @Override
     public void sendMessage(NodeInfo toNode, Message message) {
+        LogCat.logSend(toNode, message);
         sendMessage(toNode.nodeIP(), toNode.nodePort(), message);
     }
 

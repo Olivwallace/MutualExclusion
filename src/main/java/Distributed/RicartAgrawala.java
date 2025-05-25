@@ -67,7 +67,7 @@ public class RicartAgrawala {
                 isDeferred = (fromNode.id().compareTo(currentID) > 0);
             }
         }
-//--------------> 99% de certeza que aqui tem PRINT_ACK...
+
         if(isDeferred){
             deferredNodes.add(fromNode);
         } else {

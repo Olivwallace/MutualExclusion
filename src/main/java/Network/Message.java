@@ -1,5 +1,7 @@
 package Network;
 
+import org.w3c.dom.Node;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -47,6 +49,27 @@ public class Message implements Serializable {
         return String.format("Message[type=%s, sender=%s, timestamp=%s, sequence=%s, knownNodes=%s]",
                 type, sender, timestamp, sequencePrint, knownNodes);
     }
+
+    public String toArrayPrint() {
+        String s = "[ ";
+        int max = sequencePrint.size();
+        for(int i = 0; i < max; i++){
+            Integer v = sequencePrint.get(i);
+            s = s.concat((i == max - 1) ? (v + " ]") : (v + ", "));
+        }
+        return s;
+    }
+
+    public String toArrayNodes() {
+        String s = "";
+        int max = knownNodes.size();
+        for(int i = 0; i < max; i++){
+            String n = knownNodes.get(i).id();
+            s = s.concat((i == max - 1) ? (n) : (n + ", "));
+        }
+        return s;
+    }
+
 
     // Getters e Setters
     public String getType() { return type; }
