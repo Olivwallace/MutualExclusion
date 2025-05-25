@@ -20,7 +20,7 @@ public class Main {
                 new NodeInfo("Service", "192.168.0.2", 5000)
                 : new NodeInfo(args[0], args[1], Integer.parseInt(args[2]));
 
-        boolean isServer = _IS_DEBUG || Boolean.getBoolean(args[3]);            
+        boolean isServer = _IS_DEBUG || Boolean.getBoolean(args[3]);
 
         List<NodeInfo> nodesList = Uteis.readNodes("configNodes.txt");
         NodeInfo service = Uteis.readService("serviceNode.txt");

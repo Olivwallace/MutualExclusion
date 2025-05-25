@@ -24,6 +24,7 @@ public class NodePrinterService extends NodeTCP {
 
     @Override
     protected void handleMessage(Message message, String senderIp) {
+        super.handleMessage(message, senderIp);
         MessageType messageType = MessageType.valueOf(message.getType());
 
         switch (messageType){
