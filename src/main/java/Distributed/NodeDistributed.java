@@ -73,7 +73,7 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
 
             double p = Uteis.randomDouble();
 
-            if(!ricartAgrawala.isInCriticalSection()) {
+            if(!ricartAgrawala.isInCriticalSection() && !ricartAgrawala.isRequestingCriticalSection()) {
 
                 if (p > 0.5) {
                     ricartAgrawala.requestCriticalSection();
@@ -127,14 +127,14 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
 
             case RELEASE:
 
-                if (latchCriticalSection != null) latchCriticalSection.countDown();
+//                if (latchCriticalSection != null) latchCriticalSection.countDown();
                 ricartAgrawala.onRelease(message);
 
                 break;
 
             case REPLY:
 
-                if (latchCriticalSection != null) latchCriticalSection.countDown();
+//                if (latchCriticalSection != null) latchCriticalSection.countDown();
                 ricartAgrawala.onReply(message);
 
 
@@ -152,18 +152,18 @@ public class NodeDistributed extends NodeTCP implements DistributedNodeInterface
     @Override
     public void requestBroadCast(Integer timestamp){
         List<NodeInfo> knownNodes = new ArrayList<>(manager.getKnownNodes());
-        latchCriticalSection = new CountDownLatch(knownNodes.size());
+//        latchCriticalSection = new CountDownLatch(knownNodes.size());
 
         Message releaseMsg = new Message(MessageType.REQUEST.name(), nodeInfo, timestamp);
         for(NodeInfo to : knownNodes){
             sendMessage(to, releaseMsg);
         }
 
-        try {
-            latchCriticalSection.await();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+//        try {
+//            latchCriticalSection.await();
+//        }catch(Exception e){
+//            e.printStackTrace();
+//        }
     }
 
     @Override
